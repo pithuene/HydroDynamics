@@ -20,17 +20,8 @@ pi = 3.141592564
 wheelDiameter = 55
 axleTrack = 107  # 150  # 119
 
-grabDistance = [70, 80]
 
 db = DriveBase(motorWheelLeft, motorWheelRight, wheelDiameter, axleTrack)
-
-def drive(distance, speed=100, forward=True):
-    # brick.sound.beep()
-    if(forward):
-        db.drive_time(speed, 0, distance/speed*1000)
-    else:
-        db.drive_time(-speed, 0, distance/speed*1000)
-    db.stop(Stop.BRAKE)
 
 
 def turn(angle, speed=30):
@@ -43,7 +34,6 @@ def turn(angle, speed=30):
     motorWheelLeft.run_angle(speed, turnAngle, Stop.BRAKE, False)
     motorWheelRight.run_angle(speed, -turnAngle, Stop.BRAKE, True)
 
-# motor.run_target(schmackes (deg/s),wie viel (deg))
 
 
 def preciseDistance(ultrasonic, tries=5):
@@ -52,30 +42,3 @@ def preciseDistance(ultrasonic, tries=5):
         sum += ultrasonic.distance()
         wait(30)
     return sum / tries
-
-
-def approachGrab():
-    while (True):
-        dist = preciseDistance(us, 3)
-        if(dist > 150):
-            drive(100, 100)
-        else:
-            break
-
-    while (True):
-
-        dist = preciseDistance(us, 10)
-        if(dist < grabDistance[0]):
-            # Back
-            drive(25, 50, False)
-        elif (dist > grabDistance[1]):
-            # Forward
-            drive(25, 50, True)
-        else:
-            break
-    arm.grab()
-
-
-arm.grab() 
-
-wait(2000)
