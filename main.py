@@ -1,6 +1,7 @@
 #!/usr/bin/env pybricks-micropython
 
 import arm
+import nav
 
 from pybricks import ev3brick as brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
