@@ -48,6 +48,9 @@ Der Roboter verfügt über zwei angetriebene Räder und einen Greifarm, der mit 
     (Angle = Drehung der Reifen in Grad, speed = Geschwindigkeit (default 50))
     
     
+    
+- **Color***
+  - Später
   
 - **Utils**
 
