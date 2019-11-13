@@ -115,13 +115,12 @@ def readNextPoint(pointArray, returnPath):
                     turn(- (180 - localLookingDirection))
                     lookingDirection = 180
 
-            degree = (x * 10) / localWheelCircumference * 360
+            degree = abs((x * 10) / localWheelCircumference * 360)
             if(returnPath == False):
                 driveForward(degree, speed)
             else:
                 if (x == 0):
-                    degree = (currentPosition[0] * 10) / \
-                        localWheelCircumference * 360
+                    degree = abs((currentPosition[0] * 10) / localWheelCircumference * 360)
                 driveForward(degree, speed * (-1))
 
         '''
@@ -141,13 +140,12 @@ def readNextPoint(pointArray, returnPath):
                     turn(- (270 - localLookingDirection))
                     lookingDirection = 270
 
-            degree = (y * 10) / localWheelCircumference * 360
+            degree = abs((y * 10) / localWheelCircumference * 360)
             if(returnPath == False):
                 driveForward(degree, speed)
             else:
                 if (y == 0):
-                    degree = (currentPosition[1] * 10) / \
-                        localWheelCircumference * 360
+                    degree = abs((currentPosition[1] * 10) / localWheelCircumference * 360)
                 driveForward(degree, speed * (-1))
 
         currentPosition = nextPoint
