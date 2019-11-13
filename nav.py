@@ -9,6 +9,7 @@ from pybricks.tools import print, wait, StopWatch
 from pybricks.robotics import DriveBase
 from time import sleep
 import array as arr
+import math
 
 # Write your program here
 brick.sound.beep()
@@ -26,6 +27,7 @@ wheelCircumference = pi * wheelDiameter
 # Berechnung des Umfangs des Drehkreises
 turnCircumference = pi * axleTrack
 
+usr = UltrasonicSensor(Port.S1)
 
 motorWheelRight = Motor(Port.B)
 motorWheelLeft = Motor(Port.A)
@@ -39,6 +41,7 @@ lookingDirection = 0
 # Startpunkt immer Gleich (Anhand Raster auf dem Spielfeld)
 startPoint = [0, 0]
 currentPosition = startPoint
+cacheDistance = 0
 
 '''
 Erhält einen Pfad in Form eines 2D Arrays von Punkten (x,y Koordinaten) die nacheinander abgefahren werden.
@@ -74,6 +77,9 @@ def readNextPoint(pointArray, returnPath):
     global currentPosition
     global wheelCircumference
     global lookingDirection
+
+    needDistance = False
+
     localLookingDirection = lookingDirection
 
     if(returnPath == True):
@@ -98,6 +104,11 @@ def readNextPoint(pointArray, returnPath):
         nextPoint = pointArray[i]
         x = nextPoint[0]
         y = nextPoint[1]
+
+        if(len(nextPoint) == 3):
+            trash = measureDistantce(1, 0)
+            needDistance = True
+
         # print("x: " + str(x) + " y: " + str(y))
         # print("currentPosition: " + str(currentPosition[0]))
 
@@ -127,12 +138,26 @@ def readNextPoint(pointArray, returnPath):
 
             degree = abs((x * 10) / localWheelCircumference * 360)
             if(returnPath == False):
-                driveForward(degree, speed)
+                if(needDistance == False):
+                    driveForward(degree, speed)
+                else:
+                    degree = degree / 2
+                    driveForward(degree, speed)
+                    turnedAngle = measureDistantce(0, (x / 2))
+                    driveForward(degree, speed)
+                    # turn(turnedAngle)
             else:
                 if (x == 0):
                     degree = abs(
                         (currentPosition[0] * 10) / localWheelCircumference * 360)
-                driveForward(degree, speed * (-1))
+                if(needDistance == False):
+                    driveForward(degree, speed * (-1))
+                else:
+                    degree = degree / 2
+                    driveForward(degree, speed * (-1))
+                    turnedAngle = measureDistantce(0, (currentPosition[0] / 2))
+                    driveForward(degree, speed * (-1))
+                    # turn(turnedAngle)
 
         '''
             Drehung zu der nächsten Koordinate auf der y-Achse
@@ -159,16 +184,55 @@ def readNextPoint(pointArray, returnPath):
 
             degree = abs((y * 10) / localWheelCircumference * 360)
             if(returnPath == False):
-                driveForward(degree, speed)
+                if(needDistance == False):
+                    driveForward(degree, speed)
+                else:
+                    degree = degree / 2
+                    driveForward(degree, speed)
+                    turnedAngle = measureDistantce(0, (y / 2))
+                    driveForward(degree, speed)
+                    # turn(turnedAngle)
             else:
                 if (y == 0):
                     degree = abs(
                         (currentPosition[1] * 10) / localWheelCircumference * 360)
-                driveForward(degree, speed * (-1))
+                    if(needDistance == False):
+                        driveForward(degree, speed * (-1))
+                    else:
+                        degree = degree / 2
+                        driveForward(degree, speed)
+                        turnedAngle = measureDistantce(
+                            0, (currentPosition[1] / 2))
+                        driveForward(degree, speed)
+                        # turn(turnedAngle)
 
         currentPosition = nextPoint
 
         i = i + 1
+
+
+def measureDistantce(start, distance):
+    global cacheDistance
+    currentDistance = usr.distance()
+    if(start == 1):
+        cacheDistance = usr.distance()
+        return 0
+    print(str(cacheDistance) + " " + str(currentDistance))
+    # print(str(cacheDistance))
+    if(currentDistance < cacheDistance):
+        cache = (cacheDistance - currentDistance)
+        print("chache 1: " + str(cache))
+        cache = cache / (distance * 100)
+        print("chache 2: " + str(cache))
+        angle = (math.sin(cache))
+        angle = math.degrees(angle) * 2
+        print(str(angle))
+        turn((angle * (-1)) / 2)
+        return(angle)
+    elif(currentDistance > cacheDistance):
+        angle = (math.asin((currentDistance - cacheDistance) / distance)) * 2
+        turn(angle)
+        return((angle * (-1)) / 2)
 
 
 '''
