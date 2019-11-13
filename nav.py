@@ -56,7 +56,7 @@ def followCoordinatePath(pointArray):
 def returnToStart(pointArray):
     returnArray = []
     i = len(pointArray) - 1
-    print(i)
+    # print(i)
     while(i >= 0):
         # print("NexPoint: " + str(pointArray[i][0]) + " " + str(pointArray[i][1]))
         returnArray.append(pointArray[i])
@@ -92,6 +92,9 @@ def readNextPoint(pointArray, returnPath):
 
     i = 1
     while(i < len(pointArray)):                                 # Für jede Koordinate im Array
+        # print(lookingDirection)
+        if(i != 1):
+            localLookingDirection = lookingDirection
         nextPoint = pointArray[i]
         x = nextPoint[0]
         y = nextPoint[1]
@@ -103,12 +106,19 @@ def readNextPoint(pointArray, returnPath):
             Ausführen wenn nicht bereits in Blickrichtung
         '''
         if x != currentPosition[0]:
+            #print("x : " + str(x) + " Pos: " + str(currentPosition[0]))
             # Wenn Blickrichtung um 180° gedreht
             if currentPosition[0] < x:
                 if localLookingDirection != 0:                       # Wenn nach -x gesehen wird drehe nach x
                     # print("1")
-                    turn(localLookingDirection)
+                    if(localLookingDirection == 270):
+                        turn(180 - localLookingDirection)
+
+                    else:
+                        turn(localLookingDirection)
+
                     lookingDirection = 0
+
             elif currentPosition[0] > x:
                 if localLookingDirection != 180:                     # Wenn nach x gesehen wird drehe nach -x
                     # print("2")
@@ -120,7 +130,8 @@ def readNextPoint(pointArray, returnPath):
                 driveForward(degree, speed)
             else:
                 if (x == 0):
-                    degree = abs((currentPosition[0] * 10) / localWheelCircumference * 360)
+                    degree = abs(
+                        (currentPosition[0] * 10) / localWheelCircumference * 360)
                 driveForward(degree, speed * (-1))
 
         '''
@@ -134,10 +145,16 @@ def readNextPoint(pointArray, returnPath):
                     # print("3")
                     turn(- (90 - localLookingDirection))
                     lookingDirection = 90
+
             elif currentPosition[1] > y:
                 if localLookingDirection != 270:                     # Wenn nach y gesehen wird drehe nach -y
                     # print("4")
-                    turn(- (270 - localLookingDirection))
+                    if (localLookingDirection == 0):
+                        turn(90 - localLookingDirection)
+
+                    else:
+                        turn(- (270 - localLookingDirection))
+
                     lookingDirection = 270
 
             degree = abs((y * 10) / localWheelCircumference * 360)
@@ -145,7 +162,8 @@ def readNextPoint(pointArray, returnPath):
                 driveForward(degree, speed)
             else:
                 if (y == 0):
-                    degree = abs((currentPosition[1] * 10) / localWheelCircumference * 360)
+                    degree = abs(
+                        (currentPosition[1] * 10) / localWheelCircumference * 360)
                 driveForward(degree, speed * (-1))
 
         currentPosition = nextPoint
