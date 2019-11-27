@@ -20,7 +20,7 @@ def readColor(colorSensor):
 
 
 def driveToBlack(db, motorWheelLeft, motorWheelRight):
-    db.drive(30, 0)
+    db.drive(100, 0)
     colHistL = []
     colHistR = []
     colL = ''
