@@ -203,6 +203,7 @@ def driveForward(angle, speed=200):
     motorWheelLeft.run_angle(speed, angle, Stop.BRAKE, False)
     motorWheelRight.run_angle(speed, angle, Stop.BRAKE, True)
 
+
 '''
 Methode zum Vorwährtsfahren - Distanz in cm (distance) und Geschwindigkeit in mm/s (speed)
 '''
@@ -214,8 +215,3 @@ def driveDistance(distance, speed=200):
     else:
         db.drive_time(-speed, 0, abs(distance)/speed*1000)
     db.stop(Stop.BRAKE)
-    
-def driveDistanceForward():
-    rotationAngle = (distance * 10) / wheelCircumference * 360
-    motorWheelLeft.run_angle(speed, rotationAngle, Stop.HOLD, False)
-    motorWheelRight.run_angle(speed, rotationAngle, Stop.HOLD, True)
