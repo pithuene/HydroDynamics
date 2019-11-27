@@ -101,6 +101,18 @@ def readNextPoint(pointArray, returnPath):
         # print(lookingDirection)
         if(i != 1):
             localLookingDirection = lookingDirection
+            if(returnPath == True):
+                localLookingDirection = lookingDirection
+
+                if(returnPath == True):
+                    if(lookingDirection == 0):
+                        localLookingDirection = 180
+                    if(lookingDirection == 90):
+                        localLookingDirection = 270
+                    if(lookingDirection == 180):
+                        localLookingDirection = 0
+                    if(lookingDirection == 270):
+                        localLookingDirection = 90
         nextPoint = pointArray[i]
         x = nextPoint[0]
         y = nextPoint[1]
