@@ -32,8 +32,8 @@ class Line:
         y = det(d, ydiff) / div
 
         def numberBetween(num, start, end):
-            numBetweenStartEnd = (start < num) & (num < end)
-            numBetweenEndStart = (end < num) & (num < start)
+            numBetweenStartEnd = (start <= num) & (num <= end)
+            numBetweenEndStart = (end <= num) & (num <= start)
             return numBetweenEndStart | numBetweenStartEnd
 
         if numberBetween(x, self.start.x, self.end.x) & numberBetween(y, self.start.y, self.end.y):
