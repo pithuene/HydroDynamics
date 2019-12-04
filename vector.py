@@ -1,3 +1,6 @@
+import math
+
+
 ALLOWED_NUM_TYPES = (int, float)
 
 
@@ -128,3 +131,7 @@ class Vector:
 
     def ln(self):
         return math.sqrt(self.ln2())
+
+    def toAngle(self):
+        normSelf = self.normalize()
+        return ((math.atan2(normSelf.x, normSelf.y) * 180) / math.pi)
