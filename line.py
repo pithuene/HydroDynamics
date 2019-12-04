@@ -1,27 +1,24 @@
 from vector import Vector
 
 
-# Beschreibt die Vektorgleichung für eine Gerade in Parameterform,
-# dabei ist `start` der Ortsvektor, und `direction` der Richtungsvektor
+# Beschreibt eine Gerade
+# dabei ist `start` der Startpunkt, und `end` der Endpunkt
 class Line:
-    __slots__ = ['start', 'direction']
+    __slots__ = ['start', 'end']
 
-    def __init__(self, start: Vector, direction: Vector):
+    def __init__(self, start: Vector, end: Vector):
         self.start = start
-        self.direction = direction
+        self.end = end
 
     def __getitem__(self, index: int):
-        return [self.start, self.direction][index]
+        return [self.start, self.end][index]
 
     def __str__(self):
-        return "Line from {start} to {direction}]".format(start=str(self.start), direction=str(self.direction))
+        return "Line from {start} to {end}]".format(start=str(self.start), end=str(self.end))
 
     def intersects(self: Line, otherLine: Line):
-        line1 = Line(self.start, self.start + self.direction)
-        line2 = Line(otherLine.start, otherLine.start + otherLine.direction)
-
-        xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
-        ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
+        xdiff = (self[0][0] - self[1][0], otherLine[0][0] - otherLine[1][0])
+        ydiff = (self[0][1] - self[1][1], otherLine[0][1] - otherLine[1][1])
 
         def det(a, b):
             return a[0] * b[1] - a[1] * b[0]
@@ -30,7 +27,7 @@ class Line:
         if div == 0:
             return None
 
-        d = (det(*line1), det(*line2))
+        d = (det(*self), det(*otherLine))
         x = det(d, xdiff) / div
         y = det(d, ydiff) / div
         return Vector(x, y)
