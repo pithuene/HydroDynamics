@@ -30,4 +30,12 @@ class Line:
         d = (det(*self), det(*otherLine))
         x = det(d, xdiff) / div
         y = det(d, ydiff) / div
-        return Vector(x, y)
+
+        def numberBetween(num, start, end):
+            numBetweenStartEnd = (start < num) & (num < end)
+            numBetweenEndStart = (end < num) & (num < start)
+            return numBetweenEndStart | numBetweenStartEnd
+
+        if numberBetween(x, self.start.x, self.end.x) & numberBetween(y, self.start.y, self.end.y):
+            return Vector(x, y)
+        return None
