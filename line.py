@@ -1,3 +1,4 @@
+import math
 from vector import Vector
 
 
@@ -15,6 +16,12 @@ class Line:
 
     def __str__(self):
         return "Line from {start} to {end}]".format(start=str(self.start), end=str(self.end))
+
+    def length(self):
+        return math.sqrt(
+            math.pow((self.end.x - self.start.x),2) +
+            math.pow((self.end.y - self.start.y),2)
+        )
 
     def intersects(self: Line, otherLine: Line):
         xdiff = (self[0][0] - self[1][0], otherLine[0][0] - otherLine[1][0])

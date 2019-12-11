@@ -135,3 +135,7 @@ class Vector:
     def toAngle(self):
         normSelf = self.normalize()
         return ((math.atan2(normSelf.x, normSelf.y) * 180) / math.pi)
+
+    def fromAngle(angle):
+        radians = math.radians(angle)
+        return Vector(round(math.sin(radians),10), round(math.cos(radians),10))

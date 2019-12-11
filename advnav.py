@@ -11,6 +11,8 @@ from time import sleep
 import array as arr
 from vector import Vector
 from line import Line
+import color
+import utils
 
 # Write your program here
 brick.sound.beep()
@@ -20,7 +22,7 @@ brick.sound.beep()
         Sensoren und deren Ports
 '''
 wheelDiameter = 55  # Rad drehung = 17cm
-axleTrack = 105.5  # Hildi: 105.5
+axleTrack = 120  # Hildi: 105.5, Dieter: 120
 
 pi = 3.1415926536
 # Berechnung des Umfangs des Rads
@@ -30,6 +32,7 @@ turnCircumference = pi * axleTrack
 
 motorWheelRight = Motor(Port.B)
 motorWheelLeft = Motor(Port.A)
+sideUltrasonic = UltrasonicSensor(Port.S1)
 
 db = DriveBase(motorWheelLeft, motorWheelRight, wheelDiameter, axleTrack)
 
@@ -55,18 +58,31 @@ blackLines = [
 
 
 def followCoordinatePath(path: [Vector]):
-    for point in path:
+    for point in path
         driveToPoint(point)
         
            
 def driveToPoint(point: Vector):
     global position
     print("Current Position " + str(position))
-    print("Now driving to " + str(point))
+    print("Now driving to " + str(point)) 
     path = Line(position, point)
     direction = point - position
     turnToLookingDirection(direction.normalize())
+    lineCross = willCrossBlackLine(position,point)
+    if(lineCross != None):
+        position = determinePositionOnNextBlackLine(lineCross)
+
     driveDistance(path.length())
+
+def getDistanceToWall():
+    return utils.preciseDistance(sideUltrasonic)
+
+def determinePositionOnNextBlackLine(blackLine):
+    color.driveToBlack(db, motorWheelLeft, motorWheelRight)
+    newPosition = blackLine[1]
+
+
 
 
 # If the Path will cross a black line, return that line as given

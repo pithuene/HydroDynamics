@@ -28,7 +28,14 @@ from pybricks.robotics import DriveBase
 # )))
 
 # advnav.driveDistance(10, 50)
-print(str(Vector(0, 1).toAngle()))
+advnav.followCoordinatePath([
+    Vector(40, 33.25),
+    Vector(40, 88),
+])
+
+
+
+# advnav.turnToLookingDirection(Vector(0,-1))
 
 # print(str(advnav.willCrossBlackLine(Vector(18, 33.25), Vector(160, 33.25))))
 
