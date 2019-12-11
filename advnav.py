@@ -20,7 +20,7 @@ brick.sound.beep()
         Sensoren und deren Ports
 '''
 wheelDiameter = 55  # Rad drehung = 17cm
-axleTrack = 120  # 150  # 119
+axleTrack = 105.5  # Hildi: 105.5
 
 pi = 3.1415926536
 # Berechnung des Umfangs des Rads
@@ -54,16 +54,20 @@ blackLines = [
 ]
 
 
-def addVec(vec1, vec2):
-    return (vec1[0] + vec2[0], vec1[1] + vec2[1])
+def followCoordinatePath(path: [Vector]):
+    for point in path:
+        driveToPoint(point)
+        
+           
+def driveToPoint(point: Vector):
+    global position
+    print("Current Position " + str(position))
+    print("Now driving to " + str(point))
+    path = Line(position, point)
+    direction = point - position
+    turnToLookingDirection(direction.normalize())
+    driveDistance(path.length())
 
-
-def compVec(vec1, vec2):
-    return vec1[0] == vec2[0] & vec1[1] == vec2[1]
-
-
-def betweenTwoNumbers(num, bet1, bet2):
-    return ((bet1 < num) & (num < bet2)) | ((bet2 < num) & (num < bet1))
 
 # If the Path will cross a black line, return that line as given
 # in the list at the top
@@ -78,6 +82,19 @@ def willCrossBlackLine(currentPosition: Vector, nextPosition: Vector):
     return None
 
 
+def turnToLookingDirection(direction: Vector):
+    global lookingDirection
+    print("Current looking direction: " + str(lookingDirection))
+    destinationAngle = direction.toAngle()
+    currentAngle = lookingDirection.toAngle()
+    turnAngle = destinationAngle - currentAngle
+    if turnAngle < 0:
+        turnAngle += 360
+    print("Turning by: " + str(turnAngle))
+    turn(turnAngle)
+    print("New looking direction: " + str(lookingDirection))
+
+
 '''
     Methode um den Roboter zu drehen
     angle gibt die Richtungsänderung an in Grad
@@ -90,6 +107,26 @@ def willCrossBlackLine(currentPosition: Vector, nextPosition: Vector):
 def turn(angle, speed=50):
     global wheelCircumference
     global turnCircumference
+    global lookingDirection
+
+    
+    angle = angle % 360
+    if(angle > 180):
+        angle -= 360
+    elif (angle < -180):
+        angle += 360
+
+
+    negativeAngle = (angle < 0)
+    angle = abs(angle)    
+    currentAngle = lookingDirection.toAngle()
+    print("Current angle: " + str(currentAngle))
+
+    if(negativeAngle):
+        newLookingDirection = Vector.fromAngle(currentAngle - angle).normalize()
+    else:
+        newLookingDirection = Vector.fromAngle(currentAngle + angle).normalize()
+    print("New looking direction: " + str(newLookingDirection))
 
     # Berechnung der Entfernung die zurückgelegt werden muss bei einer Drehung
     turnAngleDist = turnCircumference / 360.0 * angle
@@ -97,8 +134,13 @@ def turn(angle, speed=50):
     turnAngle = turnAngleDist / wheelCircumference * 360
 
     # Wenn Gradzahl des Gyrosensors und Drehung nicht übereinstimmen -> Vorzeichen von turnAngle umtauschen
-    motorWheelLeft.run_angle(speed, turnAngle, Stop.BRAKE, False)
-    motorWheelRight.run_angle(speed, -turnAngle, Stop.BRAKE, True)
+    if(negativeAngle):
+        motorWheelLeft.run_angle(speed, -turnAngle, Stop.BRAKE, False)
+        motorWheelRight.run_angle(speed, turnAngle, Stop.BRAKE, True)
+    else:
+        motorWheelLeft.run_angle(speed, turnAngle, Stop.BRAKE, False)
+        motorWheelRight.run_angle(speed, -turnAngle, Stop.BRAKE, True)
+    lookingDirection = newLookingDirection
 
 
 '''
@@ -107,9 +149,11 @@ Methode zum Vorwährtsfahren - Distanz in cm (distance) und Geschwindigkeit in m
 
 
 def driveDistance(distance, speed=200):
+    global lookingDirection
+    global position
     if(distance >= 0):
         db.drive_time(speed, 0, abs(distance*10)/speed*1000)
     else:
         db.drive_time(-speed, 0, abs(distance*10)/speed*1000)
     db.stop(Stop.BRAKE)
-    position = position + (lookingDirection * (distance*10))
+    position = position + (lookingDirection * (distance))
