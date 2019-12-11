@@ -1,7 +1,7 @@
 import nav
 import arm
 
-M07 = [[0, 0], [7.7, 0], [7.7, -2.5]]  # x und y Koordinaten
+M07 = [[0, 0], [7.9, 0], [7.9, -0.5]]  # x und y Koordinaten
 
 
 def main():

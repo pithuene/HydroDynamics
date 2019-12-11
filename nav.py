@@ -27,7 +27,7 @@ wheelCircumference = pi * wheelDiameter
 # Berechnung des Umfangs des Drehkreises
 turnCircumference = pi * axleTrack
 
-usr = UltrasonicSensor(Port.S1)
+# usr = UltrasonicSensor(Port.S1)
 
 motorWheelRight = Motor(Port.B)
 motorWheelLeft = Motor(Port.A)
