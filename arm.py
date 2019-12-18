@@ -3,11 +3,12 @@ from pybricks.parameters import (Port, Stop)
 
 import utils
 
-motorArmMovement = Motor(Port.C)
-motorArmGrip = Motor(Port.D)
+motorArmMovement = Motor(Port.C)  # Motor der den Arm hoch und runter fährt
+motorArmGrip = Motor(Port.D)  # Motor der die Schaufel auf und zu bewegt
 
-torque = 80
+torque = 80  # Drehmoment bei dem die Motoren aufhören sollen zu drehen
 
+# Entfernung vom Ultraschallsensor, in der das Objekt noch gegriffen werden kann
 grabDistance = [70, 80]
 
 
@@ -19,16 +20,20 @@ def up(angle=0):
 
 
 def down():
-    # Komplett Hoch
+    # Arm fährt in die niedrigste Position
     motorArmMovement.run_until_stalled(-100, Stop.HOLD, torque)
 
 
 def open():
+    # Die Schaufel fährt soweit auf wie möglich
     motorArmGrip.run_until_stalled(-100, Stop.HOLD, torque)
 
 
 def close():
+    # Die Schaufel schließt so weit wie möglich
     motorArmGrip.run_until_stalled(100, Stop.HOLD, torque)
+
+# Roboter greift zu
 
 
 def grab():
@@ -36,6 +41,8 @@ def grab():
     down()
     close()
     up()
+
+# Roboter misst Distanz zu einem Objekt und nährt sich so lange bis es in Greifreichweite ist, dann greift er zu
 
 
 def approachGrab(us, nav):
