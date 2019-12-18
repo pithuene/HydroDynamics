@@ -11,8 +11,11 @@ torque = 80
 grabDistance = [70, 80]
 
 
-def up():
-    motorArmMovement.run_until_stalled(100, Stop.HOLD, torque)
+def up(angle=0):
+    if(angle != 0):
+        motorArmMovement.run_angle(100, angle, Stop.HOLD)
+    else:
+        motorArmMovement.run_until_stalled(100, Stop.HOLD, torque)
 
 
 def down():

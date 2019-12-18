@@ -57,32 +57,49 @@ blackLines = [
 ]
 
 
+def driveToBlack():
+    color.driveToBlack(db, motorWheelLeft, motorWheelRight)
+
+
 def followCoordinatePath(path: [Vector]):
-    for point in path
+    for point in path:
         driveToPoint(point)
-        
-           
-def driveToPoint(point: Vector):
+
+
+def driveToPoint(point: Vector, checkBlackLines=True):
     global position
     print("Current Position " + str(position))
-    print("Now driving to " + str(point)) 
+    print("Now driving to " + str(point))
     path = Line(position, point)
     direction = point - position
     turnToLookingDirection(direction.normalize())
-    lineCross = willCrossBlackLine(position,point)
-    if(lineCross != None):
-        position = determinePositionOnNextBlackLine(lineCross)
+    lineCross = willCrossBlackLine(position, point)
+    if(checkBlackLines & (lineCross != None)):
+        determinePositionOnNextBlackLine(lineCross)
+        driveToPoint(point, False)
+    else:
+        driveDistance(path.length())
 
-    driveDistance(path.length())
 
 def getDistanceToWall():
-    return utils.preciseDistance(sideUltrasonic)
+    return (utils.preciseDistance(sideUltrasonic) / 10) + 6
+
 
 def determinePositionOnNextBlackLine(blackLine):
+    global position
+    global lookingDirection
     color.driveToBlack(db, motorWheelLeft, motorWheelRight)
     newPosition = blackLine[1]
-
-
+    print("Determining position on Black line")
+    if(newPosition.x == 0):
+        newPosition.x = getDistanceToWall()
+        lookingDirection = Vector(0, 1)
+    else:
+        newPosition.y = getDistanceToWall()
+        lookingDirection = Vector(1, 0)
+    print("Determined: " + str(newPosition))
+    print("Now looking towards: " + str(lookingDirection))
+    position = newPosition
 
 
 # If the Path will cross a black line, return that line as given
@@ -125,23 +142,23 @@ def turn(angle, speed=50):
     global turnCircumference
     global lookingDirection
 
-    
     angle = angle % 360
     if(angle > 180):
         angle -= 360
     elif (angle < -180):
         angle += 360
 
-
     negativeAngle = (angle < 0)
-    angle = abs(angle)    
+    angle = abs(angle)
     currentAngle = lookingDirection.toAngle()
     print("Current angle: " + str(currentAngle))
 
     if(negativeAngle):
-        newLookingDirection = Vector.fromAngle(currentAngle - angle).normalize()
+        newLookingDirection = Vector.fromAngle(
+            currentAngle - angle).normalize()
     else:
-        newLookingDirection = Vector.fromAngle(currentAngle + angle).normalize()
+        newLookingDirection = Vector.fromAngle(
+            currentAngle + angle).normalize()
     print("New looking direction: " + str(newLookingDirection))
 
     # Berechnung der Entfernung die zurückgelegt werden muss bei einer Drehung
@@ -169,7 +186,8 @@ def driveDistance(distance, speed=200):
     global position
     if(distance >= 0):
         db.drive_time(speed, 0, abs(distance*10)/speed*1000)
+        position = position + (lookingDirection * (distance))
     else:
         db.drive_time(-speed, 0, abs(distance*10)/speed*1000)
+        position = position - (lookingDirection * (distance))
     db.stop(Stop.BRAKE)
-    position = position + (lookingDirection * (distance))

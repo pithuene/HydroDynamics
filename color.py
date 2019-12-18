@@ -11,9 +11,9 @@ colorLeft = ColorSensor(Port.S3)
 
 def readColor(colorSensor):
     val = colorSensor.reflection()
-    if val < 15:
+    if val < 12:
         return 'black'
-    elif val < 75:
+    elif val < 83:
         return 'color'
     else:
         return 'white'
@@ -42,8 +42,6 @@ def driveToBlack(db, motorWheelLeft, motorWheelRight):
                              'white' not in colHistL and colL != 'white')
             turnMotorToBlack(motorWheelRight, colorRight, False)
             break
-        # else:
-            # print('Read black?: ' + str('black' in colHistR))
         colHistL.append(colL)
         colHistR.append(colR)
         if(len(colHistL) > 100):
